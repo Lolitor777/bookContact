@@ -1,6 +1,7 @@
 import { response } from 'express';
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs'
+import generateJWT from '../helper/jwt.js';
 
 
 export const createUser = async( req, res = response ) => {
@@ -28,11 +29,19 @@ export const createUser = async( req, res = response ) => {
             const salt = bcrypt.genSaltSync();
             password = bcrypt.hashSync( password, salt );
 
-            const user = await User.create({ name, email, password });
+            const user = await User.create({ 
+                name, 
+                email, 
+                password 
+            });
 
+            const token = await generateJWT( user.user_id, user. name );
+            
             return res.status(200).json({
+                id: user.user_id,
                 ok: true,
-                msg: 'El usuario se ha creado correctamente.'
+                msg: 'El usuario se ha creado correctamente.',
+                token
             })
         }
         
@@ -79,8 +88,12 @@ export const login = async( req, res = response ) => {
             })
         }
 
+        const token = await generateJWT( user.dataValues.user_id, user.dataValues.name );
+
         res.status(200).json({
-            ok: true 
+            ok: true,
+            user,
+            token 
         })
         
     } catch (error) {
@@ -108,4 +121,26 @@ export const logout = async( req, res = response ) => {
     } catch (error) {  
         console.log( error );     
     }
+}
+
+
+export const renewToken = async( req, res = response ) => {
+
+    const { user_id, name } = req;
+
+    const user = await User.findByPk( user_id );
+
+    if ( !user ) {
+
+        return res.status(200).json({
+            ok: false,
+            msg: 'El usuario no existe'
+        })
+
+    }
+
+    return res.json({
+        user,
+        msg: 'Token validado'
+    })
 }
