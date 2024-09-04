@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import db from "../database/db.js";
+import User from './User.js'
 
 const Contact = db.define('tb_contact', {
     contact_id: {
@@ -22,9 +23,16 @@ const Contact = db.define('tb_contact', {
     address: {
         type: DataTypes.STRING
     },
-    state: {
-        type: DataTypes.INTEGER,
+    is_active: {
+        type: DataTypes.TINYINT,
         defaultValue: 1 
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: 'user_id'
+        }
     }
 });
 
