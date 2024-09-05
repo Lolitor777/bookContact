@@ -6,7 +6,7 @@ export const consultContact = async( req, res = response ) => {
 
     try {
 
-        const { user_id } = req.body;
+        const { user_id } = req.params;
 
         const contacts = await Contact.findAll({
             where: {
@@ -36,7 +36,7 @@ export const consultContactInactive = async( req, res = response ) => {
 
     try {
 
-        const { user_id } = req.body;
+        const { user_id } = req.params;
 
         const contacts = await Contact.findAll({
             where: {
@@ -96,7 +96,8 @@ export const createContact = async( req, res = response ) => {
 
 export const updateContact = async( req, res = response ) => {
     
-    const { contact_id, name, last_name, email, phone_number, address } = req.body;
+    const { name, last_name, email, phone_number, address } = req.body;
+    const { contact_id } = req.params
 
     try {
 
@@ -126,9 +127,39 @@ export const updateContact = async( req, res = response ) => {
 }
 
 
+export const consultContactById = async( req, res = response ) => {
+
+    const { contact_id } = req.params;
+
+    try {
+
+        const contact = await Contact.findOne({
+            where: {
+                contact_id
+            }
+        });
+
+        res.status(200).json({
+            ok: true,
+            contact
+        })
+        
+    } catch (error) {
+        
+        console.log( error );
+        res.status(400).json({
+            ok: false,
+            msg: 'Error al consultar contacto por ID'
+        })
+
+    }
+}
+
+
 export const inactiveContact = async( req, res = response ) => {
 
-    const { contact_id, is_active } = req.body;
+    const { is_active } = req.body;
+    const { contact_id } = req.params;
 
     try {
 
