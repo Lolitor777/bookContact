@@ -169,10 +169,25 @@ export const inactiveContact = async( req, res = response ) => {
             }
         } )
 
-        res.status(200).json({
-            ok: true,
-            msg: 'El contacto se ha eliminado con éxito. Puedes restaurarlo cuando desees en la sección "Historial".'
-        })
+        if ( is_active == 0) {
+    
+            return res.status(200).json({
+                ok: true,
+                msg: 'El contacto se ha eliminado con éxito. Puedes restaurarlo cuando desees en la sección "Historial".'
+            })  
+
+        }
+        else {
+
+            return res.status(200).json({
+                ok: true,
+                msg: 'El contacto se ha restaurado.'
+            })
+
+        }
+
+
+        
         
     } catch (error) {
         
